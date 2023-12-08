@@ -6,7 +6,7 @@ RSpec.describe "Dogs", type: :request do
       Dog.create(
         name: 'Harold',
         age: 4,
-        enjoys: 'barking',
+        enjoys: 'benjoys running in the yard',
         image: 'https://www.akc.org/wp-content/uploads/2017/11/Lhasa-Apso-On-White-01.jpg'
       )
       get '/dogs'
@@ -21,7 +21,7 @@ RSpec.describe "Dogs", type: :request do
         dog: {
           name: 'Harold',
           age: 4,
-          enjoys: 'barking',
+          enjoys: 'enjoys running in the yard',
           image: 'https://www.akc.org/wp-content/uploads/2017/11/Lhasa-Apso-On-White-01.jpg'
         }
       }
@@ -30,10 +30,9 @@ RSpec.describe "Dogs", type: :request do
       dog = Dog.first
       expect(dog.name).to eq 'Harold'
       expect(dog.age).to eq 4
-      expect(dog.enjoys).to eq 'barking'
+      expect(dog.enjoys).to eq 'enjoys running in the yard'
       expect(dog.image).to eq 'https://www.akc.org/wp-content/uploads/2017/11/Lhasa-Apso-On-White-01.jpg'      
     end
-  
   end
   describe "PATCH /update" do
     it "updates a dog" do
@@ -41,7 +40,7 @@ RSpec.describe "Dogs", type: :request do
         dog: {
           name: 'Harold',
           age: 4,
-          enjoys: 'barking',
+          enjoys: 'enjoys running in the yard',
           image: 'https://www.akc.org/wp-content/uploads/2017/11/Lhasa-Apso-On-White-01.jpg'
         }
       }  
@@ -52,7 +51,7 @@ RSpec.describe "Dogs", type: :request do
         dog: {
           name: 'Harold',
           age: 5,
-          enjoys: 'barking',
+          enjoys: 'enjoys running in the yard',
           image: 'https://www.akc.org/wp-content/uploads/2017/11/Lhasa-Apso-On-White-01.jpg'
         }
       }  
@@ -68,7 +67,7 @@ RSpec.describe "Dogs", type: :request do
         dog: {
           name: 'Harold',
           age: 4,
-          enjoys: 'barking',
+          enjoys: 'enjoys running in the yard',
           image: 'https://www.akc.org/wp-content/uploads/2017/11/Lhasa-Apso-On-White-01.jpg'
         }
       }  
@@ -79,4 +78,58 @@ RSpec.describe "Dogs", type: :request do
       expect(response).to have_http_status(200)
     end
   end
+   describe "cannot create a dog without valid attributes" do
+    it "can't create a dog without a name" do
+      dog_params = {
+        dog: {
+          age: 1,
+          enjoys:'enjoys running in the yard',
+          image:'https://dogtime.com/wp-content/uploads/sites/12/2011/01/GettyImages-1455758529-e1688370717758.jpg?w=1024'
+        }
+      }
+      post '/dogs', params: dog_params
+      dog = JSON.parse(response.body)
+      expect(response).to have_http_status 422
+      expect(dog['name']).to include "can't be blank"
+    end
+    it "can't create a dog without an age" do
+      dog_params = {
+        dog: {
+          name:'Nova',
+          enjoys:'enjoys running in the yard',
+          image:'https://dogtime.com/wp-content/uploads/sites/12/2011/01/GettyImages-1455758529-e1688370717758.jpg?w=1024'
+          }
+        }
+        post '/dogs', params: dog_params
+        dog = JSON.parse(response.body)
+        expect(response).to have_http_status 422
+        expect(dog['age']).to include "can't be blank"
+      end 
+      it "can't create a dog without an enjoys" do
+        dog_params = {
+          dog: {
+            name:'Nova',
+            age: 1,
+            image:'https://dogtime.com/wp-content/uploads/sites/12/2011/01/GettyImages-1455758529-e1688370717758.jpg?w=1024'
+          }
+        }
+        post '/dogs', params: dog_params
+        dog = JSON.parse(response.body)
+        expect(response).to have_http_status 422
+        expect(dog['enjoys']).to include "can't be blank"
+      end
+      it "can't create a dog without an image" do
+        dog_params = {
+          dog: {
+            name:'Nova',
+            age: 1,
+            enjoys:'enjoys running in the yard'
+          }
+        }
+        post '/dogs', params: dog_params
+        dog = JSON.parse(response.body)
+        expect(response).to have_http_status 422
+        expect(dog['image']).to include "can't be blank"
+      end
+   end
 end
