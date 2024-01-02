@@ -1,11 +1,16 @@
-dogs = [
+user1 = User.where(email: "test1@example.com").first_or_create(password: "password", password_confirmation: "password")
+user2 = User.where(email: "test2@example.com").first_or_create(password: "password", password_confirmation: "password")
+
+user1_dogs = [
     {
         name: 'Nova',
         age: 1,
         enjoys: "coffee and walks",
         location: "San Diego, CA",
         image: "https://www.spectator.co.uk/wp-content/uploads/2023/08/iStock-1219024079.webp",
-    },
+    }
+]
+ user2_dogs =[   
     {
         name: 'Taylor',
         age: 11,
@@ -22,7 +27,12 @@ dogs = [
     },
 ]
 
-dogs.each do |each_dog|
-    Dog.create each_dog
+user1_dogs.each do |each_dog|
+    user1.dogs.create each_dog
+    puts "creating dog #{each_dog}"
+end
+
+user2_dogs.each do |each_dog|
+    user2.dogs.create each_dog
     puts "creating dog #{each_dog}"
 end
